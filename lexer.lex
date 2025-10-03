@@ -1,8 +1,8 @@
 
 %{
-  #include <stdio.h>
-  #include <stdlib.h>
-  //#include "parser.hpp"
+  //#include <stdio.h>
+  //#include <stdlib.h>
+  #include "parser.hpp"
 %}
 
 %option NOYYWRAP
