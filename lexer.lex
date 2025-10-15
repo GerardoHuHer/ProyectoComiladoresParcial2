@@ -1,52 +1,61 @@
 
 %{
-  //#include <stdio.h>
-  //#include <stdlib.h>
-  #include "parser.hpp"
+  #include <stdio.h>
+  #include <stdlib.h>
+  #include <string.h>
+  //#include "parser.hpp"
+  //
+  //
+  int yywrap(void);
 %}
 
-%option NOYYWRAP
-%option outfile="lexer.cpp"
 
+%option outfile="lexer.cpp"
 
 
 ID [a-zA-Z_]+[a-zA-Z_0-9]*
 WS [ \t\n]+
+number [+-]?[0-9]+
 
 %%
 
 
-":="   { printf("OPERADOR: %s\n", yytext); }
-"<"    { printf("OPERADOR: %s\n", yytext); }   
-">"    { printf("OPERADOR: %s\n", yytext); }
-"="    { printf("OPERADOR: %s\n", yytext); }
-"<>"   { printf("OPERADOR: %s\n", yytext); }
-"<="   { printf("OPERADOR: %s\n", yytext); }
-">="   { printf("OPERADOR: %s\n", yytext); }
-"+"    { printf("OPERADOR: %s\n", yytext); }
-"-"    { printf("OPERADOR: %s\n", yytext); }
-"*"    { printf("OPERADOR: %s\n", yytext); }
-"/"    { printf("OPERADOR: %s\n", yytext); }
+":="   { return ASSIGN; }
+"<"    { return LT; }   
+">"    { return GT; }
+"="    { return EQUAL; }
+"<>"   { return NEQ; }
+"<="   { return LEQ; }
+">="   { return GEQ; }
+"+"    { return PLUS; }
+"-"    { return MINUS; }
+"*"    { return TIMES; }
+"/"    { return DIVIDE; }
 
+"if"      { return IF; }
+"then"    { return THEN; }
+"else"    { return ELSE; }
+"end"     { return END; }
 
-"if"      { printf("IF\n"); }
-"then"    { printf("THEN\n"); }
-"else"    { printf("ELSE\n"); }
-"end"     { printf("END\n"); }
+"repeat"  { return REPEAT }
+"until"   { return UNTIL }
 
-"repeat"  { printf("REPEAT\n"); }
-"until"   { printf("UNTIL\n"); }
+"read"    { return READ; }
+"write"   { return WRITE; }
 
-"read"    { printf("FUNCIÓN: %s\n", yytext); }
-"write"   { printf("FUNCIÓN: %s\n", yytext); }
+";" { return SEMIC; }
 
-";" { printf("SEPARADOR:  %s\n", yytext); }
+")" { return RPAREN; }
+"(" { return LPAREN; }
 
-")" { printf("PARENTESIS CIERRA: %s\n", yytext); }
-"(" { printf("PARENTESIS ABRE: %s\n", yytext); }
-
-{ID}    { printf("IDENTIFICADOR: %s\n", yytext); }
-[0-9]+  { printf("NÚMERO: %d\n", atoi(yytext)); }
+{ID}    { printf("IDENTIFICADOR: %s\n", yytext);
+          strcpy(yylval.id, yytext);
+          return ID;
+ }
+{number}    {
+            yylval.num = atoi(yytext);
+            return NUMBER;
+}
 
 {WS}    { /* IGNORE */ }
 
@@ -55,3 +64,6 @@ WS [ \t\n]+
 
 %%
 
+int yywrap(void) {
+    return 1;
+}
