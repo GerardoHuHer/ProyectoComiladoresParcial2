@@ -10,19 +10,16 @@
 %token IF THEN ELSE END
 %token REPEAT UNTIL
 %token READ WRITE
-%token IDENTIFICADOR NUMERO 
-%token MAS MENOS MUL DIV
-%token MENOR MAYOR IGUAL DIFERENTE MENORIGUAL MAYORIGUAL ASIGNACION
-%token PUNTOCOMA PARENIZQ PARENDER
+%token ID NUMBER 
+%token PLUS MINUS TIMES DIVIDE 
+%token ASSIGN LT GT EQUAL NEQ LEQ GEQ 
+%token SEMIC RPAREN LPAREN 
 
 %%
-
-programa: 
-    secuencia_instrucciones
-    ;
+programa: secuencia_instrucciones ;
 
 secuencia_instrucciones: 
-    secuencia_instrucciones PUNTOCOMA instruccion
+    secuencia_instrucciones SEMIC instruccion
     | instruccion
     ;
 
@@ -44,11 +41,11 @@ instruccion_repeat:
     ;
 
 instruccion_asignacion:
-      IDENTIFICADOR ASIGNACION expresion
+      ID ASSIGN expresion
     ;
 
 instruccion_read:
-      READ IDENTIFICADOR
+      READ ID
     ;
 
 instruccion_write:
@@ -57,31 +54,31 @@ instruccion_write:
 
 
 expresion:
-      expresion_simple MENOR expresion_simple
-    | expresion_simple MAYOR expresion_simple
-    | expresion_simple IGUAL expresion_simple
-    | expresion_simple DIFERENTE expresion_simple
-    | expresion_simple MENORIGUAL expresion_simple
-    | expresion_simple MAYORIGUAL expresion_simple
+      expresion_simple LT expresion_simple
+    | expresion_simple GT expresion_simple
+    | expresion_simple EQUAL expresion_simple
+    | expresion_simple NEQ expresion_simple
+    | expresion_simple LEQ expresion_simple
+    | expresion_simple GEQ expresion_simple
     | expresion_simple
     ;
 
 expresion_simple:
-      expresion_simple MAS termino
-    | expresion_simple MENOS termino
+      expresion_simple PLUS termino
+    | expresion_simple MINUS termino
     | termino
     ;
 
 termino:
-      termino POR factor
-    | termino DIV factor
+      termino TIMES factor
+    | termino DIVIDE factor
     | factor
     ;
 
 factor:
-      PARENIZQ expresion PARENDER
-    | NUMERO
-    | IDENTIFICADOR
+      LPAREN expresion RPAREN 
+    | NUMBER
+    | ID
     ;
 
 %%
@@ -99,7 +96,11 @@ int main(int argc, char **argv) {
             return 1;
         }
         yyin = file;
+    } else{
+      yyin = stdin;
     }
-    yyparse();
+    if(yyparse() == 0){
+      printf("Análisis completado exitosamente.\n");
+    }
     return 0;
 }

@@ -1,19 +1,15 @@
 
 %{
-  #include <stdio.h>
-  #include <stdlib.h>
   #include <string.h>
-  //#include "parser.hpp"
+  #include "bison.hpp"
   //
   //
-  int yywrap(void);
 %}
 
 
 %option outfile="lexer.cpp"
 
 
-ID [a-zA-Z_]+[a-zA-Z_0-9]*
 WS [ \t\n]+
 number [+-]?[0-9]+
 
@@ -37,8 +33,8 @@ number [+-]?[0-9]+
 "else"    { return ELSE; }
 "end"     { return END; }
 
-"repeat"  { return REPEAT }
-"until"   { return UNTIL }
+"repeat"  { return REPEAT; }
+"until"   { return UNTIL; }
 
 "read"    { return READ; }
 "write"   { return WRITE; }
@@ -48,14 +44,8 @@ number [+-]?[0-9]+
 ")" { return RPAREN; }
 "(" { return LPAREN; }
 
-{ID}    { printf("IDENTIFICADOR: %s\n", yytext);
-          strcpy(yylval.id, yytext);
-          return ID;
- }
-{number}    {
-            yylval.num = atoi(yytext);
-            return NUMBER;
-}
+[a-zA-Z_]+[a-zA-Z_0-9]*  { return ID; }
+{number}    { return NUMBER; }
 
 {WS}    { /* IGNORE */ }
 
