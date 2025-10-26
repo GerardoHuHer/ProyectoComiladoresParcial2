@@ -131,13 +131,6 @@ run: $(EXECUTABLE)
 		$(EXECUTABLE) $(FILE); \
 	fi
 
-# Ejecutar en modo interactivo
-interactive: $(EXECUTABLE)
-	@echo "════════════════════════════════════════"
-	@echo "Modo interactivo (Ctrl+D para terminar)"
-	@echo "════════════════════════════════════════"
-	@$(EXECUTABLE)
-
 # Compilar con optimización para release
 release: CXXFLAGS = -Wall -Wextra -O3 -DNDEBUG -std=c++17
 release: clean all
@@ -205,5 +198,5 @@ help:
 	@echo "════════════════════════════════════════"
 
 # Indicar que estos objetivos no son archivos
-.PHONY: all directories clean cleanall rebuild test run interactive \
+.PHONY: all directories clean cleanall rebuild test run  \
         release debug check info tree help
