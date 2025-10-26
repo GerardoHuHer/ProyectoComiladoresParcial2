@@ -1,3 +1,8 @@
-x := 5;
-
-if (x < 8 )then 1; else 4;
+read n;
+factorial := 1;
+contador := 1;
+repeat
+    factorial := factorial * contador;
+    contador := contador + 1
+until contador > n;
+write factorial
