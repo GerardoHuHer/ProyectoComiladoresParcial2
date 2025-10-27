@@ -47,7 +47,7 @@ $(EXECUTABLE): $(OBJECTS)
 # Generar el parser con Bison
 $(PARSER_OUTPUT) $(PARSER_HEADER): $(PARSER_SOURCE) | directories
 	@echo "→ Generando parser con Bison..."
-	bison -Wcounterexamples -ld -o$(PARSER_OUTPUT) $<
+	bison  -ld -o$(PARSER_OUTPUT) $<
 	@echo "✓ Parser generado: $(PARSER_OUTPUT)"
 
 # Generar el lexer con Flex
@@ -72,14 +72,7 @@ $(BUILD_DIR)/bison.o: $(PARSER_OUTPUT)
 clean:
 	@echo "→ Limpiando archivos generados..."
 	rm -rf $(BUILD_DIR) $(TARGET_DIR)
-	rm -f lexer.cpp lex.yy.c  # Limpiar archivos de Flex en directorio actual
 	@echo "✓ Limpieza completada"
-
-# Limpiar todo incluyendo backups
-cleanall: clean
-	@echo "→ Limpieza completa..."
-	rm -f *~ *.bak
-	@echo "✓ Limpieza completa terminada"
 
 # Reconstruir desde cero
 rebuild: clean all
@@ -131,40 +124,6 @@ run: $(EXECUTABLE)
 		$(EXECUTABLE) $(FILE); \
 	fi
 
-# Compilar con optimización para release
-release: CXXFLAGS = -Wall -Wextra -O3 -DNDEBUG -std=c++17
-release: clean all
-	@echo "✓ Build de release completado con optimizaciones"
-
-# Compilar con información de debug extra
-debug: CXXFLAGS += -g3 -O0 -DDEBUG -fsanitize=address -fsanitize=undefined
-debug: clean all
-	@echo "✓ Build de debug completado con sanitizers"
-
-# Verificar sintaxis sin compilar completamente
-check: $(PARSER_OUTPUT) $(LEXER_OUTPUT)
-	@echo "→ Verificando sintaxis..."
-	$(CXX) $(CXXFLAGS) -fsyntax-only $(LEXER_OUTPUT) $(PARSER_OUTPUT)
-	@echo "✓ Verificación completada"
-
-# Mostrar información del compilador
-info:
-	@echo "════════════════════════════════════════"
-	@echo "Información del compilador"
-	@echo "════════════════════════════════════════"
-	@echo "Compilador: $(CXX)"
-	@$(CXX) --version | head -n 1
-	@echo ""
-	@echo "Flags activos:"
-	@echo "$(CXXFLAGS)" | tr ' ' '\n' | sed 's/^/  /'
-	@echo ""
-	@echo "Bison:"
-	@bison --version | head -n 1
-	@echo ""
-	@echo "Flex:"
-	@flex --version
-	@echo "════════════════════════════════════════"
-
 # Mostrar ayuda
 help:
 	@echo "════════════════════════════════════════"
@@ -177,19 +136,12 @@ help:
 	@echo "  make clean        - Eliminar archivos generados"
 	@echo "  make rebuild      - Recompilar desde cero"
 	@echo ""
-	@echo "Modos de compilación:"
-	@echo "  make release      - Compilar optimizado para producción"
-	@echo "  make debug        - Compilar con sanitizers y debug"
-	@echo ""
 	@echo "Ejecución:"
 	@echo "  make test         - Ejecutar pruebas automáticas"
 	@echo "  make run FILE=x   - Ejecutar con archivo específico"
-	@echo "  make interactive  - Modo interactivo (stdin)"
 	@echo ""
 	@echo "Utilidades:"
-	@echo "  make check        - Verificar sintaxis sin compilar"
 	@echo "  make tree         - Mostrar estructura de directorios"
-	@echo "  make info         - Información del compilador"
 	@echo "  make help         - Mostrar esta ayuda"
 	@echo ""
 	@echo "Estructura de directorios:"
