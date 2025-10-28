@@ -142,6 +142,7 @@ help:
 	@echo "Ejecución:"
 	@echo "  make test         - Ejecutar pruebas automáticas"
 	@echo "  make run FILE=x   - Ejecutar con archivo específico"
+	@echo "  make execute   	 - Ejecutar con la entrada estándar"
 	@echo ""
 	@echo "Utilidades:"
 	@echo "  make tree         - Mostrar estructura de directorios"
