@@ -92,6 +92,9 @@ tree:
 	@echo "└── target/            (ejecutable final)"
 	@echo "    └── compilador"
 
+execute: 
+	@./target/compilador
+
 # Ejecutar pruebas básicas
 test: $(EXECUTABLE)
 	@echo "════════════════════════════════════════"
@@ -99,15 +102,19 @@ test: $(EXECUTABLE)
 	@echo "════════════════════════════════════════"
 	@echo ""
 	@echo "▶ Prueba 1: Asignación simple"
+	@echo "x := 5" 
 	@echo "x := 5" | $(EXECUTABLE) && echo "✓ PASS" || echo "✗ FAIL"
 	@echo ""
 	@echo "▶ Prueba 2: IF simple"
+	@echo "if x > 5 then write x end" 
 	@echo "if x > 5 then write x end" | $(EXECUTABLE) && echo "✓ PASS" || echo "✗ FAIL"
 	@echo ""
 	@echo "▶ Prueba 3: Secuencia de instrucciones"
+	@echo "x := 10; y := 20; z := x + y" 
 	@echo "x := 10; y := 20; z := x + y" | $(EXECUTABLE) && echo "✓ PASS" || echo "✗ FAIL"
 	@echo ""
 	@echo "▶ Prueba 4: REPEAT-UNTIL"
+	@echo "repeat x := x + 1 until x >= 10" 
 	@echo "repeat x := x + 1 until x >= 10" | $(EXECUTABLE) && echo "✓ PASS" || echo "✗ FAIL"
 	@echo ""
 
@@ -150,5 +157,5 @@ help:
 	@echo "════════════════════════════════════════"
 
 # Indicar que estos objetivos no son archivos
-.PHONY: all directories clean cleanall rebuild test run  \
-        release debug check info tree help
+.PHONY: all directories clean rebuild test run  \
+         check info tree help execute
