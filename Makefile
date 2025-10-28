@@ -2,10 +2,6 @@
 
 # Compilador y flags (máximo nivel de warnings)
 CXX = g++
-CXXFLAGS = -Wall -Wextra -Wpedantic -Wshadow -Wformat=2 -Wfloat-equal \
-           -Wconversion -Wlogical-op -Wshift-overflow=2 -Wduplicated-cond \
-           -Wcast-qual -Wcast-align -Wno-unused-parameter -std=c++17 -g
-
 # Directorios
 SRC_DIR = .
 BUILD_DIR = build
@@ -41,7 +37,7 @@ directories:
 # Compilar el ejecutable final
 $(EXECUTABLE): $(OBJECTS)
 	@echo "→ Enlazando ejecutable..."
-	$(CXX) $(CXXFLAGS) -o $@ $^
+	$(CXX)  -o $@ $^
 	@echo "✓ Ejecutable generado"
 
 # Generar el parser con Bison
@@ -61,12 +57,12 @@ $(LEXER_OUTPUT): $(LEXER_SOURCE) $(PARSER_HEADER) | directories
 # Compilar archivo objeto del lexer
 $(BUILD_DIR)/lexer.o: $(LEXER_OUTPUT)
 	@echo "→ Compilando lexer..."
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX)  -c $< -o $@
 
 # Compilar archivo objeto del parser
 $(BUILD_DIR)/bison.o: $(PARSER_OUTPUT)
 	@echo "→ Compilando parser..."
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX)  -c $< -o $@
 
 # Limpiar archivos generados
 clean:
