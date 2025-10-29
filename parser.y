@@ -9,7 +9,7 @@
     using namespace std;
     
     // Tamaño de la tabla con un número primo grande para mejor distribución
-    const unsigned int TAM_TABLA = 211;
+    extern const unsigned int TAM_TABLA = 211;
     
     // Estructura de símbolo
     struct Simbolo {
@@ -123,14 +123,9 @@ int main(int argc, char **argv) {
         yyin = stdin;
     }
     
-    int result = yyparse();
-    
-    if(result == 0){
-        printf("\n✓ Análisis completado exitosamente.\n");
+    if(yyparse() == 0){
+        printf("\n Se acepta el archivo\n");
         mostrarTabla();
-    } else {
-        printf("\n✗ Análisis fallido.\n");
-    }
-    
-    return result;
+    }     
+    return 0;
 }

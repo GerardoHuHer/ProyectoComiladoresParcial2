@@ -68,6 +68,7 @@ number [+-]?[0-9]+
 .           { printf("Caracter desconocido en línea %d: %s\n", line_number, yytext); }
 
 %%
+  
   unsigned int funcionHash(string id) {
       unsigned int suma = 0;
       for (char c : id)
@@ -107,7 +108,6 @@ number [+-]?[0-9]+
       cout << "IDENTIFICADOR        LÍNEAS\n";
       cout << "========================================\n";
       
-      // Recolectar todos los símbolos
       vector<Simbolo> todosSimbolos;
       for (unsigned int i = 0; i < TAM_TABLA; i++) {
           for (const Simbolo& simbolo : tabla[i]) {
@@ -115,12 +115,7 @@ number [+-]?[0-9]+
           }
       }
       
-      // Ordenar alfabéticamente
-      sort(todosSimbolos.begin(), todosSimbolos.end(), 
-           [](const Simbolo& a, const Simbolo& b) {
-               return a.id < b.id;
-           });
-      
+       
       // Mostrar símbolos
       for (const Simbolo& simbolo : todosSimbolos) {
           cout << simbolo.id;
