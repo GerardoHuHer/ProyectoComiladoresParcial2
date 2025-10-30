@@ -23,7 +23,6 @@
   void insertar(string id, unsigned int linea);
   bool existeID(string id);
   void mostrarTabla();
-  void mostrarTablaHash();
   
 %}
 
@@ -135,17 +134,4 @@ number [+-]?[0-9]+
       cout << "Total de símbolos: " << todosSimbolos.size() << "\n\n";
   }
   
-  void mostrarTablaHash() {
-      cout << "\n=== Contenido de la tabla hash (índices) ===\n";
-      for (unsigned int i = 0; i < TAM_TABLA; i++) {
-          if (!tabla[i].empty()) {
-              cout << i << ": ";
-              for (const Simbolo& simbolo : tabla[i]) {
-                  cout << simbolo.id << " ";
-              }
-              cout << "\n";
-          }
-      }
-      cout << "\n";
-  }
 

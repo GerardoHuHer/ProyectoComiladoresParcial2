@@ -25,11 +25,7 @@
     // Prototipos de funciones
     int yylex(void);
     void yyerror(const char *s);
-    unsigned int funcionHash(string id);
-    void insertar(string id, int linea);
-    bool existeID(string id);
-    void mostrarTabla();
-    void mostrarTablaHash();
+    extern void mostrarTabla();
 %}
 
 %token IF THEN ELSE END
