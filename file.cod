@@ -1,8 +1,0 @@
-read n;
-factorial := 1;
-contador := 1;
-repeat
-    factorial := factorial * contador;
-    contador := contador + 1
-until contador > n;
-write factorial
