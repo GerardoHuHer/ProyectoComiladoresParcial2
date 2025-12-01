@@ -1,0 +1,96 @@
+# Makefile para Windows (MinGW)
+# Directorios
+BUILD_DIR = build
+TARGET_DIR = target
+
+# Compiladores
+CXX = g++
+FLEX = flex
+BISON = bison
+
+# Flags
+CXXFLAGS = -std=c++11 -I$(BUILD_DIR)
+BISON_FLAGS = -ld
+FLEX_FLAGS = -L
+
+# Archivos fuente
+PARSER_Y = parser.y
+LEXER_L = lexer.lex
+
+# Archivos generados
+BISON_CPP = $(BUILD_DIR)/bison.cpp
+BISON_HPP = $(BUILD_DIR)/bison.hpp
+LEXER_CPP = $(BUILD_DIR)/lexer.cpp
+ARBOL_CPP = $(BUILD_DIR)/arbol.cpp
+ARBOL_HPP = $(BUILD_DIR)/arbol.hpp
+
+# Archivos objeto
+LEXER_O = $(BUILD_DIR)/lexer.o
+BISON_O = $(BUILD_DIR)/bison.o
+ARBOL_O = $(BUILD_DIR)/arbol.o
+
+# Ejecutable final (con .exe para Windows)
+EJECUTABLE = $(TARGET_DIR)/compilador.exe
+
+# Regla principal
+all: $(EJECUTABLE)
+
+# Crear ejecutable
+$(EJECUTABLE): $(LEXER_O) $(BISON_O) $(ARBOL_O)
+	@echo → Enlazando ejecutable...
+	@if not exist $(TARGET_DIR) mkdir $(TARGET_DIR)
+	$(CXX) $(CXXFLAGS) -o $@ $^
+	@echo ✓ Ejecutable generado: $@
+
+# Compilar arbol.cpp
+$(ARBOL_O): $(ARBOL_CPP) $(ARBOL_HPP)
+	@echo → Compilando árbol...
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Compilar bison
+$(BISON_O): $(BISON_CPP) $(BISON_HPP) $(ARBOL_HPP)
+	@echo → Compilando parser...
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Compilar lexer
+$(LEXER_O): $(LEXER_CPP) $(BISON_HPP)
+	@echo → Compilando lexer...
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Generar lexer con Flex
+$(LEXER_CPP): $(LEXER_L) $(BISON_HPP)
+	@echo → Generando lexer con Flex...
+	$(FLEX) $(FLEX_FLAGS) $<
+	@echo ✓ Lexer generado: $@
+
+# Generar parser con Bison
+$(BISON_CPP) $(BISON_HPP): $(PARSER_Y)
+	@echo → Generando parser con Bison...
+	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
+	$(BISON) $(BISON_FLAGS) -o$(BISON_CPP) $<
+	@echo ✓ Parser generado: $@
+
+# Limpiar archivos generados
+clean:
+	@echo → Limpiando archivos generados...
+	@if exist $(BUILD_DIR)\*.o del /Q $(BUILD_DIR)\*.o
+	@if exist $(BUILD_DIR)\bison.cpp del /Q $(BUILD_DIR)\bison.cpp
+	@if exist $(BUILD_DIR)\bison.hpp del /Q $(BUILD_DIR)\bison.hpp
+	@if exist $(BUILD_DIR)\lexer.cpp del /Q $(BUILD_DIR)\lexer.cpp
+	@if exist $(EJECUTABLE) del /Q $(EJECUTABLE)
+	@echo ✓ Limpieza completa
+
+# Ejecutar con archivo de prueba
+run: $(EJECUTABLE)
+	@echo → Ejecutando compilador...
+	$(EJECUTABLE) file.cod
+
+# Ayuda
+help:
+	@echo Targets disponibles:
+	@echo   all     - Compilar todo (default)
+	@echo   clean   - Limpiar archivos generados
+	@echo   run     - Compilar y ejecutar con file.cod
+	@echo   help    - Mostrar esta ayuda
+
+.PHONY: all clean run help
