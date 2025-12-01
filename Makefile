@@ -1,158 +1,92 @@
-# Makefile para compilador con Flex y Bison
-
-# Compilador y flags (máximo nivel de warnings)
-CXX = g++
 # Directorios
-SRC_DIR = .
 BUILD_DIR = build
 TARGET_DIR = target
 
-# Nombres de archivos fuente
-LEXER_SOURCE = $(SRC_DIR)/lexer.lex
-PARSER_SOURCE = $(SRC_DIR)/parser.y
+# Compiladores
+CXX = g++
+FLEX = flex
+BISON = bison
 
-# Archivos generados en build/
-LEXER_OUTPUT = $(BUILD_DIR)/lexer.cpp
-PARSER_OUTPUT = $(BUILD_DIR)/bison.cpp
-PARSER_HEADER = $(BUILD_DIR)/bison.hpp
+# Flags
+CXXFLAGS = -std=c++11 -I$(BUILD_DIR)
+BISON_FLAGS = -ld
+FLEX_FLAGS = -L
 
-# Ejecutable final en target/
-EXECUTABLE = $(TARGET_DIR)/compilador
+# Archivos fuente
+PARSER_Y = parser.y
+LEXER_L = lexer.lex
 
-# Archivos objeto en build/
-OBJECTS = $(BUILD_DIR)/lexer.o $(BUILD_DIR)/bison.o
+# Archivos generados
+BISON_CPP = $(BUILD_DIR)/bison.cpp
+BISON_HPP = $(BUILD_DIR)/bison.hpp
+LEXER_CPP = $(BUILD_DIR)/lexer.cpp
+ARBOL_CPP = $(BUILD_DIR)/arbol.cpp
+ARBOL_HPP = $(BUILD_DIR)/arbol.hpp
+
+# Archivos objeto
+LEXER_O = $(BUILD_DIR)/lexer.o
+BISON_O = $(BUILD_DIR)/bison.o
+ARBOL_O = $(BUILD_DIR)/arbol.o
+
+# Ejecutable final
+EJECUTABLE = $(TARGET_DIR)/compilador
 
 # Regla principal
-all: directories $(EXECUTABLE)
-	@echo "════════════════════════════════════════"
-	@echo "✓ Compilación exitosa"
-	@echo "✓ Ejecutable: $(EXECUTABLE)"
-	@echo "════════════════════════════════════════"
+all: $(EJECUTABLE)
 
-# Crear directorios necesarios
-directories:
-	@mkdir -p $(BUILD_DIR)
-	@mkdir -p $(TARGET_DIR)
-
-# Compilar el ejecutable final
-$(EXECUTABLE): $(OBJECTS)
+# Crear ejecutable
+$(EJECUTABLE): $(LEXER_O) $(BISON_O) $(ARBOL_O)
 	@echo "→ Enlazando ejecutable..."
-	$(CXX)  -o $@ $^
-	@echo "✓ Ejecutable generado"
+	@mkdir -p $(TARGET_DIR)
+	$(CXX) $(CXXFLAGS) -o $@ $^
+	@echo "✓ Ejecutable generado: $@"
 
-# Generar el parser con Bison
-$(PARSER_OUTPUT) $(PARSER_HEADER): $(PARSER_SOURCE) | directories
-	@echo "→ Generando parser con Bison..."
-	bison  -ld -o$(PARSER_OUTPUT) $<
-	@echo "✓ Parser generado: $(PARSER_OUTPUT)"
+# Compilar arbol.cpp
+$(ARBOL_O): $(ARBOL_CPP) $(ARBOL_HPP)
+	@echo "→ Compilando árbol..."
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Generar el lexer con Flex
-$(LEXER_OUTPUT): $(LEXER_SOURCE) $(PARSER_HEADER) | directories
-	@echo "→ Generando lexer con Flex..."
-	flex -L $<
-	@if [ -f lexer.cpp ]; then mv lexer.cpp $(LEXER_OUTPUT); fi
-	@if [ -f lex.yy.c ]; then mv lex.yy.c $(LEXER_OUTPUT); fi
-	@echo "✓ Lexer generado: $(LEXER_OUTPUT)"
-
-# Compilar archivo objeto del lexer
-$(BUILD_DIR)/lexer.o: $(LEXER_OUTPUT)
-	@echo "→ Compilando lexer..."
-	$(CXX)  -c $< -o $@
-
-# Compilar archivo objeto del parser
-$(BUILD_DIR)/bison.o: $(PARSER_OUTPUT)
+# Compilar bison
+$(BISON_O): $(BISON_CPP) $(BISON_HPP) $(ARBOL_HPP)
 	@echo "→ Compilando parser..."
-	$(CXX)  -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Compilar lexer
+$(LEXER_O): $(LEXER_CPP) $(BISON_HPP)
+	@echo "→ Compilando lexer..."
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Generar lexer con Flex
+$(LEXER_CPP): $(LEXER_L) $(BISON_HPP)
+	@echo "→ Generando lexer con Flex..."
+	$(FLEX) $(FLEX_FLAGS) $<
+	@echo "✓ Lexer generado: $@"
+
+# Generar parser con Bison
+$(BISON_CPP) $(BISON_HPP): $(PARSER_Y)
+	@echo "→ Generando parser con Bison..."
+	@mkdir -p $(BUILD_DIR)
+	$(BISON) $(BISON_FLAGS) -o$(BISON_CPP) $<
+	@echo "✓ Parser generado: $@"
 
 # Limpiar archivos generados
 clean:
 	@echo "→ Limpiando archivos generados..."
-	rm -rf $(BUILD_DIR) $(TARGET_DIR)
-	@echo "✓ Limpieza completada"
+	rm -rf $(BUILD_DIR)/*.o $(BUILD_DIR)/bison.cpp $(BUILD_DIR)/bison.hpp $(BUILD_DIR)/lexer.cpp
+	rm -rf $(EJECUTABLE)
+	@echo "✓ Limpieza completa"
 
-# Reconstruir desde cero
-rebuild: clean all
+# Ejecutar con archivo de prueba
+run: $(EJECUTABLE)
+	@echo "→ Ejecutando compilador..."
+	./$(EJECUTABLE) file.cod
 
-# Mostrar estructura de directorios
-tree:
-	@echo "Estructura del proyecto:"
-	@echo "."
-	@echo "├── lexer.lex          (fuente)"
-	@echo "├── parser.y           (fuente)"
-	@echo "├── build/             (archivos intermedios)"
-	@echo "│   ├── lexer.cpp"
-	@echo "│   ├── lexer.o"
-	@echo "│   ├── bison.cpp"
-	@echo "│   ├── bison.hpp"
-	@echo "│   └── bison.o"
-	@echo "└── target/            (ejecutable final)"
-	@echo "    └── compilador"
-
-execute: 
-	@./target/compilador
-
-# Ejecutar pruebas básicas
-test: $(EXECUTABLE)
-	@echo "════════════════════════════════════════"
-	@echo "Ejecutando pruebas básicas"
-	@echo "════════════════════════════════════════"
-	@echo ""
-	@echo "▶ Prueba 1: Asignación simple"
-	@echo "x := 5" 
-	@echo "x := 5" | $(EXECUTABLE) && echo "✓ PASS" || echo "✗ FAIL"
-	@echo ""
-	@echo "▶ Prueba 2: IF simple"
-	@echo "if x > 5 then write x end" 
-	@echo "if x > 5 then write x end" | $(EXECUTABLE) && echo "✓ PASS" || echo "✗ FAIL"
-	@echo ""
-	@echo "▶ Prueba 3: Secuencia de instrucciones"
-	@echo "x := 10; y := 20; z := x + y" 
-	@echo "x := 10; y := 20; z := x + y" | $(EXECUTABLE) && echo "✓ PASS" || echo "✗ FAIL"
-	@echo ""
-	@echo "▶ Prueba 4: REPEAT-UNTIL"
-	@echo "repeat x := x + 1 until x >= 10" 
-	@echo "repeat x := x + 1 until x >= 10" | $(EXECUTABLE) && echo "✓ PASS" || echo "✗ FAIL"
-	@echo ""
-
-# Ejecutar con archivo de entrada
-run: $(EXECUTABLE)
-	@if [ -z "$(FILE)" ]; then \
-		echo "════════════════════════════════════════"; \
-		echo "Uso: make run FILE=archivo.txt"; \
-		echo "════════════════════════════════════════"; \
-	else \
-		echo "════════════════════════════════════════"; \
-		echo "Ejecutando: $(FILE)"; \
-		echo "════════════════════════════════════════"; \
-		$(EXECUTABLE) $(FILE); \
-	fi
-
-# Mostrar ayuda
+# Ayuda
 help:
-	@echo "════════════════════════════════════════"
-	@echo "Makefile para compilador Flex/Bison"
-	@echo "════════════════════════════════════════"
-	@echo ""
-	@echo "Objetivos principales:"
-	@echo "  make              - Compilar el proyecto"
-	@echo "  make all          - Compilar el proyecto"
-	@echo "  make clean        - Eliminar archivos generados"
-	@echo "  make rebuild      - Recompilar desde cero"
-	@echo ""
-	@echo "Ejecución:"
-	@echo "  make test         - Ejecutar pruebas automáticas"
-	@echo "  make run FILE=x   - Ejecutar con archivo específico"
-	@echo "  make execute   	 - Ejecutar con la entrada estándar"
-	@echo ""
-	@echo "Utilidades:"
-	@echo "  make tree         - Mostrar estructura de directorios"
-	@echo "  make help         - Mostrar esta ayuda"
-	@echo ""
-	@echo "Estructura de directorios:"
-	@echo "  build/   - Archivos intermedios (.cpp, .o, .hpp)"
-	@echo "  target/  - Ejecutable final"
-	@echo "════════════════════════════════════════"
+	@echo "Targets disponibles:"
+	@echo "  all     - Compilar todo (default)"
+	@echo "  clean   - Limpiar archivos generados"
+	@echo "  run     - Compilar y ejecutar con file.cod"
+	@echo "  help    - Mostrar esta ayuda"
 
-# Indicar que estos objetivos no son archivos
-.PHONY: all directories clean rebuild test run  \
-         check info tree help execute
+.PHONY: all clean run help
