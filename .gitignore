@@ -2,4 +2,10 @@
 *.cpp
 *.hpp
 target/
-build/
+build/arbol.o
+build/bison.cpp
+build/bison.hpp
+build/bison.o
+build/lexer.cpp
+build/lexer.o
+
