@@ -1,0 +1,8 @@
+numero_entero := 5;
+num := 4;
+
+if (numero_entero > 5) then 
+	numero_entero := 3;
+	num := num + 1;
+	numero_entero := 4 
+end
