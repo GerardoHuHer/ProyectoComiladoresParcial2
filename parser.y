@@ -162,9 +162,11 @@ void insertar(string id, unsigned int linea) {
     
     for (Simbolo& simbolo : tabla[indice]) {
         if (simbolo.id == id) {
-            if (find(simbolo.lineas.begin(), simbolo.lineas.end(), linea) == simbolo.lineas.end()) {
-                simbolo.lineas.push_back(linea);
-            }
+            //if (find(simbolo.lineas.begin(), simbolo.lineas.end(), linea) == simbolo.lineas.end()) {
+            //    simbolo.lineas.push_back(linea);
+            //}
+
+            simbolo.lineas.push_back(linea);
             return;
         }
     }
