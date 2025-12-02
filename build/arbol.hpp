@@ -65,7 +65,7 @@ NodoAST* crearNodoIdentificador(string nombre);
 NodoAST* crearNodoConstante(int valor);
 
 // Función para imprimir el árbol
-void imprimirAST(NodoAST* nodo, int indentacion = 0);
+void imprimirAST(NodoAST* nodo, unsigned int indentacion = 0);
 
 // Función para liberar memoria del árbol
 void liberarAST(NodoAST* nodo);

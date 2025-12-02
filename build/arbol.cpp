@@ -93,14 +93,14 @@ string obtenerNombreOperador(TipoOperador op) {
 }
 
 // Función para imprimir espacios de indentación
-void imprimirIndentacion(int nivel) {
-    for (int i = 0; i < nivel; i++) {
+void imprimirIndentacion(unsigned int nivel) {
+    for (unsigned int i = 0; i < nivel; i++) {
         cout << "  ";
     }
 }
 
 // Función para imprimir el AST
-void imprimirAST(NodoAST* nodo, int indentacion) {
+void imprimirAST(NodoAST* nodo, unsigned int indentacion) {
     if (nodo == nullptr) return;
     
     imprimirIndentacion(indentacion);
