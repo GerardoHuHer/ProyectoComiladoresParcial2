@@ -218,7 +218,7 @@ void mostrarTabla() {
 }
 
 void yyerror(const char *s) {
-    fprintf(stderr, "Error sintáctico en línea %d: %s\n", yylineno, s);
+    fprintf(stderr, "Error sintáctico en línea %d: %s\n", yylineno - 1, s);
 }
 
 int main(int argc, char **argv) {
