@@ -1,0 +1,25 @@
+read x;
+read y;
+
+x := 10;
+y := 0;
+
+if x < 20 then
+  write x;
+  y := x * (2 + 3);
+  write y
+else
+  write y;
+  y := x / 2;
+  write y
+end;
+
+/* ERROR SINTÁCTICO AQUÍ: falta la expresión después de := */
+z := ;
+
+repeat
+  x := x - 1;
+  write x
+until x = 0;
+
+write x;
